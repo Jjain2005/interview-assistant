@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Interview Assistant</title>
+
+  <style>
+
+    /* =====================================================
+       GLOBAL
+       ===================================================== */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 360px;
+      min-height: 100vh;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background: #f6f8fb;
+      color: #1f2937;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+
+      /* Reduced from 176px */
+      height: 125px;
+
+      padding: 10px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      background: #0b2a4a;
+
+      color: white;
+      text-align: center;
+    }
+
+    .logo {
+
+      /* Slightly smaller to save vertical space */
+      width: 110px;
+      height: 48px;
+
+      object-fit: contain;
+
+      margin-bottom: 4px;
+    }
+
+    .headerTitle {
+
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+
+      color: white;
+    }
+
+
+    /* =====================================================
+       MAIN CONTAINER
+       ===================================================== */
+
+    .container {
+      padding: 18px;
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .card {
+
+      background: #ffffff;
+
+      border-radius: 20px;
+
+      padding: 20px;
+
+      margin-bottom: 14px;
+
+      box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+
+    /* =====================================================
+       CANDIDATE NAME
+       ===================================================== */
+
+    #candidateName {
+
+      margin: 0 0 18px 0;
+
+      font-size: 22px;
+      font-weight: 700;
+
+      line-height: 1.2;
+
+      color: #111827;
+    }
+
+
+    /* =====================================================
+       CANDIDATE DETAILS
+       ===================================================== */
+
+    .detailRow {
+
+      display: flex;
+      align-items: flex-start;
+
+      margin-bottom: 12px;
+    }
+
+    .detailRow:last-child {
+      margin-bottom: 0;
+    }
+
+    .detailLabel {
+
+      width: 115px;
+
+      flex-shrink: 0;
+
+      font-size: 13px;
+      font-weight: 500;
+
+      color: #6b7280;
+    }
+
+    .detailValue {
+
+      flex: 1;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      line-height: 1.35;
+
+      color: #1f2937;
+
+      word-break: break-word;
+    }
+
+
+    /* =====================================================
+       SKELETON LOADER
+       ===================================================== */
+
+    .candidateSkeleton {
+      width: 100%;
+    }
+
+    .skeletonName {
+
+      width: 65%;
+      height: 25px;
+
+      margin-bottom: 20px;
+
+      border-radius: 7px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #edf0f3 25%,
+          #f7f8fa 50%,
+          #edf0f3 75%
+        );
+
+      background-size: 200% 100%;
+
+      animation:
+        skeletonShimmer 1.4s infinite;
+    }
+
+    .skeletonDetailRow {
+
+      display: flex;
+      align-items: center;
+
+      margin-bottom: 14px;
+    }
+
+    .skeletonFixedLabel {
+
+      width: 115px;
+
+      flex-shrink: 0;
+
+      font-size: 13px;
+      font-weight: 500;
+
+      color: #6b7280;
+    }
+
+    .skeletonValue {
+
+      height: 14px;
+
+      border-radius: 5px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #edf0f3 25%,
+          #f7f8fa 50%,
+          #edf0f3 75%
+        );
+
+      background-size: 200% 100%;
+
+      animation:
+        skeletonShimmer 1.4s infinite;
+    }
+
+    .skeletonValueShort {
+      width: 90px;
+    }
+
+    .skeletonValueMedium {
+      width: 140px;
+    }
+
+    .skeletonValueLong {
+      width: 170px;
+    }
+
+    @keyframes skeletonShimmer {
+
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+
+    /* =====================================================
+       HIDDEN
+       ===================================================== */
+
+    .hidden {
+      display: none !important;
+    }
+
+
+    /* =====================================================
+       EMPTY STATE
+       ===================================================== */
+
+    #emptyState {
+
+      font-size: 13px;
+
+      color: #6b7280;
+
+      text-align: center;
+
+      padding: 10px 0;
+    }
+
+
+    /* =====================================================
+       ACTION BUTTONS
+       ===================================================== */
+
+    .actionButtons {
+
+      display: flex;
+
+      gap: 8px;
+
+      margin-top: 18px;
+    }
+
+    .actionButton {
+
+      flex: 1;
+
+      min-height: 40px;
+
+      padding: 8px 10px;
+
+      border: 1px solid #d9dee7;
+
+      border-radius: 10px;
+
+      background: #ffffff;
+
+      color: #0b2a4a;
+
+      font-family: inherit;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.1s ease,
+        opacity 0.2s ease;
+    }
+
+    .actionButton:hover {
+
+      background: #f3f7fb;
+
+      border-color: #b8c4d2;
+    }
+
+    .actionButton:active {
+
+      transform: scale(0.98);
+    }
+
+    .actionButton:disabled {
+
+      opacity: 0.55;
+
+      cursor: not-allowed;
+    }
+
+
+    /* =====================================================
+       SECTION TITLE
+       ===================================================== */
+
+    .sectionTitle {
+
+      margin: 0 0 10px 0;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      color: #374151;
+    }
+
+
+    /* =====================================================
+       STATUS DROPDOWN
+       ===================================================== */
+
+    #statusDropdown {
+
+      position: relative;
+
+      width: 100%;
+    }
+
+    #statusSelected {
+
+      width: 100%;
+
+      min-height: 42px;
+
+      padding: 7px 12px;
+
+      border: 1px solid #d9dee7;
+
+      border-radius: 10px;
+
+      background: #ffffff;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      cursor: pointer;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    #statusSelected:hover {
+
+      border-color: #b8c0cc;
+    }
+
+    #statusSelected:focus {
+
+      border-color: #6b8db3;
+
+      box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+    }
+
+    .dropdownArrow {
+
+      margin-left: 8px;
+
+      font-size: 10px;
+
+      color: #6b7280;
+    }
+
+    #statusOptions {
+
+      position: absolute;
+
+      left: 0;
+      right: 0;
+
+      top: calc(100% + 6px);
+
+      z-index: 100;
+
+      padding: 6px;
+
+      background: #ffffff;
+
+      border: 1px solid #e2e6ec;
+
+      border-radius: 12px;
+
+      box-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    .statusOption {
+
+      padding: 5px;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      transition:
+        background 0.15s ease;
+    }
+
+    .statusOption:hover {
+
+      background: #f5f7fa;
+    }
+
+
+    /* =====================================================
+       STATUS CHIPS
+       ===================================================== */
+
+    .statusChip {
+
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 5px 10px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      line-height: 1;
+
+      white-space: nowrap;
+    }
+
+    .status-selected {
+
+      background: #d9f2df;
+
+      color: #218739;
+    }
+
+    .status-rejected {
+
+      background: #fde0e0;
+
+      color: #c62828;
+    }
+
+    .status-no-show-1 {
+
+      background: #dcecff;
+
+      color: #2772c9;
+    }
+
+    .status-no-show-2 {
+
+      background: #f5cccc;
+
+      color: #a61b1b;
+    }
+
+    .status-hold {
+
+      background: #fff0bd;
+
+      color: #9a7000;
+    }
+
+
+    /* =====================================================
+       REMARK
+       ===================================================== */
+
+    #remark {
+
+      width: 100%;
+
+      min-height: 90px;
+
+      padding: 11px 12px;
+
+      resize: vertical;
+
+      border: 1px solid #d9dee7;
+
+      border-radius: 10px;
+
+      background: #ffffff;
+
+      color: #1f2937;
+
+      font-family: inherit;
+
+      font-size: 13px;
+
+      outline: none;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    #remark::placeholder {
+
+      color: #9ca3af;
+    }
+
+    #remark:focus {
+
+      border-color: #6b8db3;
+
+      box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.08);
+    }
+
+
+    /* =====================================================
+       SAVE REMARK BUTTON
+       ===================================================== */
+
+    #saveRemark {
+
+      width: 100%;
+
+      margin-top: 10px;
+
+      padding: 10px 14px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      background: #0b2a4a;
+
+      color: #ffffff;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+    }
+
+    #saveRemark:hover {
+
+      background: #123b64;
+    }
+
+    #saveRemark:active {
+
+      transform: scale(0.98);
+    }
+
+
+    /* =====================================================
+       TOAST / TEMPORARY MESSAGE
+       ===================================================== */
+
+    #message {
+
+      position: fixed;
+
+      top: 18px;
+      right: 18px;
+
+      z-index: 9999;
+
+      max-width: 300px;
+
+      padding: 12px 16px;
+
+      border-radius: 10px;
+
+      background: #ffffff;
+
+      box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.15);
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      opacity: 0;
+
+      transform: translateY(-10px);
+
+      pointer-events: none;
+
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    #message.show {
+
+      opacity: 1;
+
+      transform: translateY(0);
+    }
+
+    #message.info {
+
+      color: #697386;
+    }
+
+    #message.success {
+
+      color: #218739;
+    }
+
+    #message.error {
+
+      color: #c62828;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <!-- =====================================================
+       TEMPORARY TOAST MESSAGE
+       ===================================================== -->
+
+  <div id="message"></div>
+
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
+  <div class="header">
+
+    <img
+      src="logo.png"
+      class="logo"
+      alt="INFINEO"
+    >
+
+    <div class="headerTitle">
+      Interview Assistant
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  <div class="container">
+
+
+    <!-- ===================================================
+         CANDIDATE CARD
+         =================================================== -->
+
+    <div
+      id="candidateDetails"
+      class="card"
+    >
+
+      <!-- SKELETON -->
+
+      <div
+        id="candidateSkeleton"
+        class="candidateSkeleton"
+      >
+
+        <div class="skeletonName"></div>
+
+        <div class="skeletonDetailRow">
+
+          <div class="skeletonFixedLabel">
+            Phone Number
+          </div>
+
+          <div
+            class="skeletonValue skeletonValueShort"
+          ></div>
+
+        </div>
+
+
+        <div class="skeletonDetailRow">
+
+          <div class="skeletonFixedLabel">
+            Specialization
+          </div>
+
+          <div
+            class="skeletonValue skeletonValueLong"
+          ></div>
+
+        </div>
+
+
+        <div class="skeletonDetailRow">
+
+          <div class="skeletonFixedLabel">
+            Graduate / Pursuing
+          </div>
+
+          <div
+            class="skeletonValue skeletonValueMedium"
+          ></div>
+
+        </div>
+
+
+        <div class="skeletonDetailRow">
+
+          <div class="skeletonFixedLabel">
+            Role Applied For
+          </div>
+
+          <div
+            class="skeletonValue skeletonValueLong"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           REAL CANDIDATE CONTENT
+           ================================================= -->
+
+      <div
+        id="candidateContent"
+        class="hidden"
+      >
+
+        <h2 id="candidateName">
+          -
+        </h2>
+
+
+        <div class="detailRow">
+
+          <div class="detailLabel">
+            Phone Number
+          </div>
+
+          <div
+            id="candidatePhone"
+            class="detailValue"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="detailRow">
+
+          <div class="detailLabel">
+            Specialization
+          </div>
+
+          <div
+            id="candidateSpecialization"
+            class="detailValue"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="detailRow">
+
+          <div class="detailLabel">
+            Graduate / Pursuing
+          </div>
+
+          <div
+            id="candidateStudyStatus"
+            class="detailValue"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="detailRow">
+
+          <div class="detailLabel">
+            Role Applied For
+          </div>
+
+          <div
+            id="candidateRole"
+            class="detailValue"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <!-- ===============================================
+             RESUME + INTERVIEW QUESTIONS
+             =============================================== -->
+
+        <div class="actionButtons">
+
+          <button
+            id="resumeButton"
+            class="actionButton"
+            type="button"
+          >
+            📄 Resume Preview
+          </button>
+
+
+          <button
+            id="questionsButton"
+            class="actionButton"
+            type="button"
+          >
+            📋 Interview Questions
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           EMPTY STATE
+           ================================================= -->
+
+      <div
+        id="emptyState"
+        class="hidden"
+      >
+        No candidate found.
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         INTERVIEW OUTCOME
+         =================================================== -->
+
+    <div
+      id="statusSection"
+      class="card hidden"
+    >
+
+      <div class="sectionTitle">
+        Interview Outcome
+      </div>
+
+
+      <div id="statusDropdown">
+
+        <div id="statusSelected">
+
+          <span class="statusChip status-hold">
+            Select outcome
+          </span>
+
+          <span class="dropdownArrow">
+            ▼
+          </span>
+
+        </div>
+
+
+        <div
+          id="statusOptions"
+          class="hidden"
+        >
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         REMARK
+         =================================================== -->
+
+    <div
+      id="remarkSection"
+      class="card hidden"
+    >
+
+      <div class="sectionTitle">
+        Remark
+      </div>
+
+
+      <textarea
+        id="remark"
+        placeholder="Add interview remarks..."
+      ></textarea>
+
+
+      <button
+        id="saveRemark"
+        type="button"
+      >
+        Save Remark
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       SCRIPTS
+       ===================================================== -->
+<script src="config.js"></script>
+<script src="meet.js"></script>
+<script src="timestamp-writer.js"></script>
+<script src="contacts.js"></script>
+<script src="popup.js"></script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Interview Assistant",
+  "version": "1.0.0",
+  "description": "Internal interview management assistant",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzDifXbXdYf74P3VMyDNxDioS0y5w28JAIDxTAlQQDiAIjdmGnWrnTeCSBgsCy7S4+Ug+psa8BidKZTVS4hyjaN/u6hQJ4K8IDyNTruIPkL0hugqHUfaSkN2yPHgxQbmnMbgiRTFzZ6DNOeBqLcW9m/ZhPSWrfRLKYKYIIoYNRPFSqPXTcO4oLgXSMSc3vIlvcMwEWnVuwbykB0dVKEKdeUqfsWIT56UZLZmC6PfqlyBfypUmJ7MauDVT91A3N3JxRlfEgfRUPn+4/l8lknHdh973tYOsLvtegIhbABrbUW1aoEmZ/uxIj5P7E72J44wqYXSnogFjBtZqVYKmlPdDiQIDAQAB",
+  "action": {
+    "default_title": "Interview Assistant"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "identity",
+    "sidePanel",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://sheets.googleapis.com/*",
+    "https://meet.google.com/*",
+    "https://meet.googleapis.com/*",
+    "https://people.googleapis.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "oauth2": {
+    "client_id": "696432244643-mmthj2b66ccurd8er1itbtc6vgnv0ucq.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/meetings.space.readonly",
+      "https://www.googleapis.com/auth/meetings.space.created",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/contacts",
+      "https://www.googleapis.com/auth/contacts.other.readonly"
+    ]
+  }
+}
